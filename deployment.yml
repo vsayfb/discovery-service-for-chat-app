@@ -33,3 +33,46 @@ spec:
   ports:
     - port: 8761
       targetPort: 8761
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zipkin
+  labels:
+    app: zipkin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zipkin
+  template:
+    metadata:
+      labels:
+        app: zipkin
+    spec:
+      containers:
+        - name: zipkin
+          image: openzipkin/zipkin:latest
+          ports:
+            - containerPort: 9411
+          env:
+            - name: ZIPKIN_HTTP_PORT
+              value: "9411"
+          resources:
+            requests:
+              memory: "300Mi"
+            limits:
+              memory: "300Mi"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tracing-service
+spec:
+  selector:
+    app: zipkin
+  ports:
+    - port: 9411
+      targetPort: 9411
