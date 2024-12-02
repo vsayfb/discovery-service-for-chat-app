@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discovery-ms
+spec:
+  selector:
+    matchLabels:
+      app: discovery-ms
+  template:
+    metadata:
+      labels:
+        app: discovery-ms
+    spec:
+      containers:
+        - name: discovery-ms
+          image: discovery-ms:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: "400Mi"
+            requests:
+              memory: "300Mi"
+          ports:
+            - containerPort: 8761
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: discovery-service
+spec:
+  selector:
+    app: discovery-ms
+  ports:
+    - port: 8761
+      targetPort: 8761
